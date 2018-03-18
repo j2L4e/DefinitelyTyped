@@ -23,6 +23,9 @@ declare module 'ember-data' {
     type AttributesFor<Model> = keyof Model; // TODO: filter to attr properties only (TS 2.8)
     type RelationshipsFor<Model> = keyof Model; // TODO: filter to hasMany/belongsTo properties only (TS 2.8)
 
+    export interface ChangedAttributes {
+        [key: string]: [any, any] | undefined;
+    }
     interface AttributeMeta<Model extends DS.Model> {
         type: keyof TransformRegistry;
         options: object;
@@ -491,7 +494,7 @@ declare module 'ember-data' {
             /**
              * Same as `deleteRecord`, but saves the record immediately.
              */
-            destroyRecord(options: {}): RSVP.Promise<any>;
+            destroyRecord(options?: {}): RSVP.Promise<any>;
             /**
              * Unloads the record from the store. This will cause the record to be destroyed and freed up for garbage collection.
              */
@@ -500,7 +503,7 @@ declare module 'ember-data' {
              * Returns an object, whose keys are changed properties, and value is
              * an [oldProp, newProp] array.
              */
-            changedAttributes(): {};
+            changedAttributes(): ChangedAttributes;
             /**
              * If the model `hasDirtyAttributes` this function will discard any unsaved
              * changes. If the model `isNew` it will be removed from the store.
@@ -870,7 +873,7 @@ declare module 'ember-data' {
          */
         interface PromiseArray<T>
             extends Ember.ArrayProxy<T>,
-                Ember.PromiseProxyMixin<PromiseArray<T>> {}
+                Ember.PromiseProxyMixin<Ember.ArrayProxy<T>> {}
         class PromiseArray<T> {}
         /**
          * A `PromiseObject` is an object that acts like both an `Ember.Object`
@@ -881,7 +884,7 @@ declare module 'ember-data' {
          */
         interface PromiseObject<T>
             extends Ember.ObjectProxy,
-                Ember.PromiseProxyMixin<T & PromiseObject<T>> {}
+                Ember.PromiseProxyMixin<T & Ember.ObjectProxy> {}
         class PromiseObject<T> {}
         /**
          * A PromiseManyArray is a PromiseArray that also proxies certain method calls
